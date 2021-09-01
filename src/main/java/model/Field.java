@@ -23,6 +23,11 @@ public class Field {
                 generatePiece(i, j);
             }
         }
+        field[9][0] = Piece.CIRCLE;
+        field[9][1] = Piece.CIRCLE;
+        field[8][2] = Piece.CIRCLE;
+        field[7][2] = Piece.CIRCLE;
+        field[9][3] = Piece.CIRCLE;
         listener.update();
     }
 
@@ -224,8 +229,12 @@ public class Field {
                         isRemoved = true;
                         additionalSize = 0;
                         int newI = 0;
+                        int addForLastPiece = 0;
+                        if (i == size-1 && field[i][j] == curPiece) {
+                            addForLastPiece++;
+                        }
                         for (int k = 0; k < curCombSize; k++) {
-                            newI = i-curCombSize+k;
+                            newI = i-curCombSize+k+addForLastPiece;
                             if (j != 0 && field[newI][j-1] == curPiece && j != size-1 && field[newI][j+1] == curPiece){
                                 additionalSize += 2;
                                 field[newI][j-1] = Piece.EMPTY;
@@ -252,9 +261,8 @@ public class Field {
                             field[newI][j] = Piece.EMPTY;
                             if (additionalSize != 0) break;
                         }
-                        while (i-1 != newI){
-                            field[++newI][j] = Piece.EMPTY;
-                        }
+                        for (; newI < i-1+addForLastPiece; newI++)
+                            field[newI][j] = Piece.EMPTY;
                         curCombSize += additionalSize;
                         if (curCombSize == 5) pointSum += 7;
                         else if (curCombSize == 6) pointSum += 10;
@@ -275,8 +283,10 @@ public class Field {
                 if (field[i][j] != curPiece || j == size-1) {
                     if (curCombSize > 2){
                         isRemoved = true;
+                        int addForLastPiece = 0;
+                        if (j == size-1 && field[i][j] == curPiece) addForLastPiece++;
                         for (int k = 0; k < curCombSize; k++){
-                            field[i][j-curCombSize+k] = Piece.EMPTY;
+                            field[i][j-curCombSize+k+addForLastPiece] = Piece.EMPTY;
                             pointSum += curCombSize;
                         }
                         listener.updateScore(pointSum);
