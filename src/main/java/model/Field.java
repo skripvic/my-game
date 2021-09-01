@@ -117,7 +117,6 @@ public class Field {
 //                    }
 //                }
 //            }
-//            System.out.println(pointSum);
 //            listener.update();
 //        }
         //return countDeleted;
@@ -133,18 +132,15 @@ public class Field {
                 if (field[i][j] != Piece.EMPTY && countEmpty > 0){
                     field[i][lowestEmpty] = field[i][j];
                     lowestEmpty--;
-                    System.out.println(lowestEmpty);
                     field[i][j] = Piece.EMPTY;
                 }
             }
             listener.update();
             for (; lowestEmpty >= 0; lowestEmpty--){
-                System.out.println(lowestEmpty);
                 generatePiece(i, lowestEmpty);
             }
             listener.update();
         }
-        System.out.println("drop");
         removeCombinations();
     }
 
@@ -297,7 +293,6 @@ public class Field {
             }
         }
         listener.update();
-        System.out.println("delete");
         if (isRemoved) dropGeneratePieces();
         return isRemoved;
     }

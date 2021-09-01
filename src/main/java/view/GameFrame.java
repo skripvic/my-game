@@ -201,7 +201,6 @@ public class GameFrame extends JFrame implements GameView, GameField.ClickListen
                 record = Integer.parseInt(s.substring(indexOfNumber));
                 if (score > record){
                     newRecordPanel(lines, score, s);
-                    System.out.println("NEW RECORD");
                     return true;
                 }
             }
