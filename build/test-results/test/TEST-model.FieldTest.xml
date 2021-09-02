@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="model.FieldTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2021-09-02T18:33:11" hostname="DESKTOP-NM6Q60H" time="0.033">
+  <properties/>
+  <testcase name="angleFive()" classname="model.FieldTest" time="0.026"/>
+  <testcase name="ifRemoved()" classname="model.FieldTest" time="0.003"/>
+  <testcase name="straightThree()" classname="model.FieldTest" time="0.0"/>
+  <testcase name="straightFive()" classname="model.FieldTest" time="0.001"/>
+  <testcase name="straightFour()" classname="model.FieldTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

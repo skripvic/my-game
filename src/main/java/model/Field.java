@@ -23,12 +23,7 @@ public class Field {
                 generatePiece(i, j);
             }
         }
-        field[9][0] = Piece.CIRCLE;
-        field[9][1] = Piece.CIRCLE;
-        field[8][2] = Piece.CIRCLE;
-        field[7][2] = Piece.CIRCLE;
-        field[9][3] = Piece.CIRCLE;
-        listener.update();
+        if (listener != null) listener.update();
     }
 
     private void generatePiece(int i, int j) {
@@ -78,49 +73,15 @@ public class Field {
 
     private void tryMovePieces(int x1, int y1, int x2, int y2){
         switchPieces(x1, y1, x2, y2);
-        listener.update();
+        if (listener != null) listener.update();
         if (!removeCombinations()){
             switchPieces(x1, y1, x2, y2);
-            listener.update();
+            if (listener != null) listener.update();
         }
     }
 
     private void dropGeneratePieces(){
-//        int countDeleted = 0;
-//        int k;
-//        listener.update();
-//        int iMin = Math.min(x1, x2) - 2;
-//        int iMax = Math.min(x1, x2) + 4;
-//        if (iMin < 0) iMin = 0;
-//        if (iMax > size-1) iMax = size;
-//        for (int j = size-1; j >= 0; j--) {
-//            for (int i = iMin; i < iMax; i++) {
-//                if (field[i][j] == Piece.EMPTY) {
-//                    k = j - 1;
-//                    while (k >= 0) {
-//                        if (field[i][k] == Piece.EMPTY){
-//                            k--;
-//                        }
-//                        else {
-//                            switchPieces(i, j, i, k);
-//                            listener.update();
-//                            countDeleted += checkForCombinations(i, j);
-//                            if (countDeleted > 0) countDeleted += movePiecesFromTop(i, j);
-//                            break;
-//                        }
-//                    }
-//                    if (k == -1){
-//                        generatePiece(i, j);
-//                        listener.update();
-//                        countDeleted += checkForCombinations(i, j);
-//                        if (countDeleted > 0) countDeleted += movePiecesFromTop(i, j);
-//                    }
-//                }
-//            }
-//            listener.update();
-//        }
-        //return countDeleted;
-        listener.update();
+        if (listener != null) listener.update();
         int countEmpty, lowestEmpty = 0;
         for (int i = 0; i < size; i++) {
             countEmpty = 0;
@@ -135,11 +96,11 @@ public class Field {
                     field[i][j] = Piece.EMPTY;
                 }
             }
-            listener.update();
+            if (listener != null) listener.update();
             for (; lowestEmpty >= 0; lowestEmpty--){
                 generatePiece(i, lowestEmpty);
             }
-            listener.update();
+            if (listener != null) listener.update();
         }
         removeCombinations();
     }
@@ -151,66 +112,6 @@ public class Field {
     }
 
     private boolean removeCombinations(){
-//        int lineSize = 5;
-//        int countDeleted = 0;
-//        boolean[] xEquals = new boolean[lineSize];
-//        boolean[] yEquals = new boolean[lineSize];
-//        for (int i = 0; i < lineSize; i++){
-//            if (x-2+i >= 0 && x-2+i < size && field[x][y] == field[x-2+i][y]){
-//                xEquals[i] = true;
-//            }
-//        }
-//        for (int i = 0; i < lineSize; i++){
-//            if (y-2+i >= 0 && y-2+i < size && field[x][y] == field[x][y-2+i])
-//                yEquals[i] = true;
-//        }
-//        if (xEquals[0] & xEquals[1]){
-//            if (!xEquals[3] & xEquals[4])
-//                xEquals[4] = false;
-//            for (int i = 0; i < lineSize; i++)
-//                if (xEquals[i]) {
-//                    field[x-2+i][y] = Piece.EMPTY;
-//                    countDeleted++;
-//                }
-//        } else if (xEquals[3] & xEquals[4]){
-//            if (!xEquals[1] & xEquals[0])
-//                xEquals[0] = false;
-//            for (int i = 0; i < lineSize; i++)
-//                if (xEquals[i]) {
-//                    field[x-2+i][y] = Piece.EMPTY;
-//                    countDeleted++;
-//                }
-//        } else if (xEquals[1] & xEquals[3]){
-//            for (int i = 0; i < lineSize; i++)
-//                if (xEquals[i]) {
-//                    field[x-2+i][y] = Piece.EMPTY;
-//                    countDeleted++;
-//                }
-//        }
-//        if (yEquals[0] & yEquals[1]){
-//            if (!yEquals[3] & yEquals[4])
-//                yEquals[4] = false;
-//            for (int i = 0; i < lineSize; i++)
-//                if (yEquals[i]) {
-//                    field[x][y-2+i] = Piece.EMPTY;
-//                    countDeleted++;
-//                }
-//        } else if (yEquals[3] & yEquals[4]){
-//            if (!yEquals[1] & yEquals[0])
-//                yEquals[0] = false;
-//            for (int i = 0; i < lineSize; i++)
-//                if (yEquals[i]) {
-//                    field[x][y-2+i] = Piece.EMPTY;
-//                    countDeleted++;
-//                }
-//        } else if (yEquals[1] & yEquals[3]){
-//            for (int i = 0; i < lineSize; i++)
-//                if (yEquals[i]) {
-//                    field[x][y-2+i] = Piece.EMPTY;
-//                    countDeleted++;
-//                }
-//        }
-//        return countDeleted;
         int curCombSize, additionalSize;
         boolean isRemoved = false;
         Piece curPiece = Piece.EMPTY;
@@ -264,7 +165,7 @@ public class Field {
                         else if (curCombSize == 6) pointSum += 10;
                         else if (curCombSize == 7) pointSum += 15;
                         else pointSum += curCombSize;
-                        listener.updateScore(pointSum);
+                        if (listener != null) listener.updateScore(pointSum);
                     }
                     curPiece = field[i][j];
                     curCombSize = 1;
@@ -285,14 +186,14 @@ public class Field {
                             field[i][j-curCombSize+k+addForLastPiece] = Piece.EMPTY;
                             pointSum += curCombSize;
                         }
-                        listener.updateScore(pointSum);
+                        if (listener != null) listener.updateScore(pointSum);
                     }
                     curPiece = field[i][j];
                     curCombSize = 1;
                 }
             }
         }
-        listener.update();
+        if (listener != null) listener.update();
         if (isRemoved) dropGeneratePieces();
         return isRemoved;
     }
@@ -312,6 +213,13 @@ public class Field {
         return pointSum;
     }
 
+    public void changeFieldPiece(int i, int j, Piece piece){
+        field[i][j] = piece;
+    }
+
+    public Piece getPiece(int i, int j){
+        return field[i][j];
+    }
 
     @Override
     public String toString() {
