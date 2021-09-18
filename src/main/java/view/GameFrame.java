@@ -4,11 +4,6 @@ import presenter.GamePresenter;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 
 public class GameFrame extends JFrame implements GameView, GameField.ClickListener{
 
@@ -30,12 +25,14 @@ public class GameFrame extends JFrame implements GameView, GameField.ClickListen
 
     private static final String START_BUTTON = "START GAME";
     private static final String NEW_RECORD_FRAME = "NEW RECORD";
-    private static final String NEW_RECORD_MESSAGE = "  You have a new record! Type your name, use only 3 letters:  ";
+    private static final String RECORDS_FRAME = "RECORDS";
+    private static final String NO_RECORDS_MESSAGE = "No records yet!";
+    private static final String NEW_RECORD_MESSAGE = "  You have a new record! Type your name here:  ";
     private static final String END_GAME_MESSAGE = "Game is over! Start new game?";
     private static final String[] END_GAME_OPTIONS = {"New game", "Exit"};
     private static final String END_GAME = "End game";
 
-
+    private final Records records;
     private final GameField gameField;
     private GamePresenter presenter;
     Timer timer;
@@ -49,16 +46,32 @@ public class GameFrame extends JFrame implements GameView, GameField.ClickListen
         this.setLayout(new GridBagLayout());
         this.setPreferredSize(new Dimension(600, 650));
         this.setResizable(false);
-        GridBagConstraints constraints = new GridBagConstraints();
+
+        records = new Records();
 
         Button refillButton = new Button("Refill field");
         refillButton.addActionListener(e -> presenter.refill());
+
         scoreText = new JTextArea(String.format(POINT_COUNT, 0));
-        timerText = new JTextArea(String.format(TIME_LIMIT, 0));
         scoreText.setBackground(this.getBackground());
-        timerText.setBackground(this.getBackground());
         scoreText.setEditable(false);
+
+        timerText = new JTextArea(String.format(TIME_LIMIT, 0));
+        timerText.setBackground(this.getBackground());
         timerText.setEditable(false);
+
+        gameField = new GameField(fieldSize);
+        gameField.setClickListener(this);
+
+        fillGridForGameFrame(refillButton);
+        setupMenu();
+        this.pack();
+        this.setLocationRelativeTo(null);
+        this.setVisible(true);
+    }
+
+    private void fillGridForGameFrame(Button refillButton){
+        GridBagConstraints constraints = new GridBagConstraints();
 
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.weightx = 1.0;
@@ -78,14 +91,7 @@ public class GameFrame extends JFrame implements GameView, GameField.ClickListen
         constraints.gridy = 1;
         constraints.gridwidth = 3;
         constraints.ipady = 550;
-        gameField = new GameField(fieldSize);
-        gameField.setClickListener(this);
         this.getContentPane().add(gameField, constraints);
-
-        setupMenu();
-        this.pack();
-        this.setLocationRelativeTo(null);
-        this.setVisible(true);
     }
 
 
@@ -102,7 +108,10 @@ public class GameFrame extends JFrame implements GameView, GameField.ClickListen
         newGameItem.addActionListener(event -> presenter.newGame());
         aboutItem.addActionListener(event -> aboutPanel());
         highScoresItem.addActionListener(event -> recordsPanel(false));
-        recordsDelete.addActionListener(event -> deleteAllRecords());
+        recordsDelete.addActionListener(event -> {
+            records.deleteAllRecords();
+            recordsPanel(false);
+        });
         exitItem.addActionListener(event -> System.exit(0));
 
         menu.add(newGameItem);
@@ -117,10 +126,10 @@ public class GameFrame extends JFrame implements GameView, GameField.ClickListen
 
 
     private void aboutPanel(){
-        JFrame frame = new JFrame();
+        JFrame frame = new JFrame(ABOUT);
         JTextArea aboutText = new JTextArea(ABOUT_TEXT);
         aboutText.setEditable(false);
-        frame.setPreferredSize(new Dimension(400, 120));
+        frame.setPreferredSize(new Dimension(450, 120));
         frame.add(aboutText);
         frame.setLocationRelativeTo(null);
         frame.pack();
@@ -129,19 +138,47 @@ public class GameFrame extends JFrame implements GameView, GameField.ClickListen
 
 
     private void recordsPanel(boolean isEnd){
-        JFrame frame = new JFrame("Records");
-        StringBuilder content = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(new FileReader("Records"))){
-            for (int i = 0; i < 8; i++) {
-                content.append(reader.readLine());
-                content.append("\n\n");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        JFrame frame = new JFrame(RECORDS_FRAME);
+        frame.setLayout(new GridBagLayout());
+
+        String names = records.getAllNames();
+        String scores = records.getAllScores();
+        if (!scores.equals("")) {
+            scores = scores.replaceAll(",", "\n\n")
+                    .replace("[", "")
+                    .replace("]", "")
+                    .replaceAll(" ", "");
+
+            names = names.replaceAll(",", "\n\n")
+                    .replace("[", "")
+                    .replace("]", "")
+                    .replaceAll(" ", "");
         }
-        JTextArea text = new JTextArea(content.toString());
-        text.setPreferredSize(new Dimension(300, 300));
-        text.setEditable(false);
+        else{
+            names = NO_RECORDS_MESSAGE;
+            scores = NO_RECORDS_MESSAGE;
+        }
+
+        JTextArea textNames = new JTextArea(names);
+        JTextArea textScores = new JTextArea(scores);
+
+        textNames.setPreferredSize(new Dimension(150, 300));
+        textNames.setEditable(false);
+        textNames.setBackground(getBackground());
+        textScores.setPreferredSize(new Dimension(150, 300));
+        textScores.setEditable(false);
+        textScores.setBackground(getBackground());
+
+        GridBagConstraints constraints = new GridBagConstraints();
+
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        constraints.ipadx = 110;
+
+        frame.add(textNames, constraints);
+        constraints.gridx = 1;
+        constraints.ipadx = 25;
+        frame.add(textScores, constraints);
 
         if (isEnd) {
             frame.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -151,21 +188,10 @@ public class GameFrame extends JFrame implements GameView, GameField.ClickListen
                 }
             });
         }
-        frame.setPreferredSize(new Dimension(400, 300));
-        frame.add(text);
+        frame.setPreferredSize(new Dimension(400, 450));
         frame.setLocation(400, 150);
         frame.pack();
         frame.setVisible(true);
-    }
-
-    private void deleteAllRecords(){
-        try {
-            List <String> lines = Files.readAllLines(Paths.get("DefaultRecords"));
-            Files.write(Paths.get("Records"), lines);
-            recordsPanel(false);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public void createStartPanel() {
@@ -192,25 +218,7 @@ public class GameFrame extends JFrame implements GameView, GameField.ClickListen
     }
 
 
-    private boolean isNewRecord(int score){
-        try {
-            List <String> lines = Files.readAllLines(Paths.get("Records"));
-            int record, indexOfNumber = 71;
-            for(String s : lines) {
-                if (s.contains("RECORDS")) continue;
-                record = Integer.parseInt(s.substring(indexOfNumber));
-                if (score > record){
-                    newRecordPanel(lines, score, s);
-                    return true;
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    private void newRecordPanel(List<String> lines, int score, String string){
+    private void newRecordPanel(){
         JFrame frame = new JFrame(NEW_RECORD_FRAME);
         frame.setLayout(new GridBagLayout());
 
@@ -235,44 +243,17 @@ public class GameFrame extends JFrame implements GameView, GameField.ClickListen
         frame.setVisible(true);
         newRecordField.addActionListener(e -> {
             frame.dispose();
-            StringBuilder name = new StringBuilder(newRecordField.getText());
-            while (name.length() < 3) name.append(" ");
-            String finalName = name.toString();
-            if (name.length() > 3) finalName = finalName.substring(0,3);
-            saveNewRecord(lines, score, finalName, string);
+            String name = newRecordField.getText();
+            records.saveNewRecord(name);
+            recordsPanel(true);
         });
     }
 
-    private void saveNewRecord(List<String> lines, int score, String name, String string){
-        int indexOfName = 36, indexOfNumber = 71, indexOfPlace = 16;
-        string = string.replace(string.substring(indexOfName, indexOfName+3), name);
-        string = string.replace(string.substring(indexOfNumber), Integer.toString(score));
-        List<String> newLines = new ArrayList<>();
-        boolean changePlace = false;
-        for(String s : lines) {
-            if (newLines.size() == 8) break;
-            if (s.contains("RECORDS")) {
-                newLines.add(s);
-                continue;
-            }
-            if (s.charAt(indexOfPlace) == string.charAt(indexOfPlace)){
-                changePlace = true;
-                newLines.add(string);
-            }
-            if (changePlace) s = s.replace(s.substring(indexOfPlace, indexOfPlace+1), Integer.toString(lines.indexOf(s)+1));
-            newLines.add(s);
-        }
-        try {
-            Files.write(Paths.get("Records"), newLines);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        recordsPanel(true);
-    }
 
     @Override
     public void start(String field) {
         gameField.updateField(field);
+        if (timer != null) timer.stop();
         timer = new Timer(presenter, this);
     }
 
@@ -288,7 +269,9 @@ public class GameFrame extends JFrame implements GameView, GameField.ClickListen
 
     @Override
     public void end(int score) {
-        if (!isNewRecord(score)) endGameFrame();
+        if (!records.isNewRecord(score))
+            endGameFrame();
+        else newRecordPanel();
     }
 
     private void endGameFrame(){

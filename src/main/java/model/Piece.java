@@ -6,8 +6,7 @@ public enum Piece {
     SQUARE("S"),
     CIRCLE("O"),
     CROSS("X"),
-    EMPTY(" "),
-    FORTEST("F");
+    EMPTY(" ");
 
     private final String symbol;
 

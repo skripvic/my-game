@@ -1,110 +1,134 @@
 package model;
-
 import org.junit.jupiter.api.Test;
 
-import model.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FieldTest {
+    private final Field field = new Field(10);
+    private String fieldString;
+    private int updateNum;
+
+    FieldListener testListener = new FieldListener() {
+        @Override
+        public void update() {
+            updateNum++;
+            if (updateNum <= 2){
+                fieldString = field.toString();
+            }
+        }
+
+        @Override
+        public void updateScore(int score) { }
+    };
+
+    private int getIndex(int i, int j){
+        return i*10+j;
+    }
+
 
     @Test
     void straightThree() {
-        Field field = new Field(10);
+        field.setListener(testListener);
         field.fillField();
-        field.changeFieldPiece(0,9, Piece.FORTEST);
-        field.changeFieldPiece(1,9, Piece.FORTEST);
-        field.changeFieldPiece(2,8, Piece.FORTEST);
+        updateNum = 0;
+        field.changeFieldPiece(0,9, Piece.CROSS);
+        field.changeFieldPiece(1,9, Piece.CROSS);
+        field.changeFieldPiece(2,8, Piece.CROSS);
         // .  .  .  .
-        // .  .  F  .
-        // F  F  .  .
+        // .  .  X  .
+        // X  X  .  .
         field.update(8*10+2);
         field.update(9*10+2);
-        assertNotEquals(field.getPiece(0,9), Piece.FORTEST);
-        assertNotEquals(field.getPiece(1,9), Piece.FORTEST);
-        assertNotEquals(field.getPiece(2,9), Piece.FORTEST);
+        assertEquals(" ", fieldString.substring(9, 10));
+        assertEquals(" ", fieldString.substring(19, 20));
+        assertEquals(" ", fieldString.substring(29, 30));
     }
 
     @Test
     void straightFour() {
-        Field field = new Field(10);
+        field.setListener(testListener);
         field.fillField();
-        field.changeFieldPiece(0,9, Piece.FORTEST);
-        field.changeFieldPiece(1,9, Piece.FORTEST);
-        field.changeFieldPiece(3,9, Piece.FORTEST);
-        field.changeFieldPiece(2,8, Piece.FORTEST);
-        // .  .  F  .  .
-        // F  F  .  F  .
+        updateNum = 0;
+        field.changeFieldPiece(0,9, Piece.CROSS);
+        field.changeFieldPiece(1,9, Piece.CROSS);
+        field.changeFieldPiece(3,9, Piece.CROSS);
+        field.changeFieldPiece(2,8, Piece.CROSS);
+        // .  .  .  .  .
+        // .  .  X  .  .
+        // X  X  .  X  .
         field.update(8*10+2);
         field.update(9*10+2);
-        assertNotEquals(field.getPiece(0,9), Piece.FORTEST);
-        assertNotEquals(field.getPiece(1,9), Piece.FORTEST);
-        assertNotEquals(field.getPiece(2,9), Piece.FORTEST);
-        assertNotEquals(field.getPiece(3,9), Piece.FORTEST);
+        assertEquals(" ", fieldString.substring(getIndex(0,9), getIndex(0,9)+1) );
+        assertEquals(" ", fieldString.substring(getIndex(1,9), getIndex(1,9)+1) );
+        assertEquals(" ", fieldString.substring(getIndex(2,9), getIndex(2,9)+1) );
+        assertEquals(" ", fieldString.substring(getIndex(3,9), getIndex(3,9)+1) );
+
     }
 
     @Test
     void angleFive() {
-        Field field = new Field(10);
+        field.setListener(testListener);
         field.fillField();
-        field.changeFieldPiece(0,9, Piece.FORTEST);
-        field.changeFieldPiece(1,9, Piece.FORTEST);
-        field.changeFieldPiece(3,9, Piece.FORTEST);
-        field.changeFieldPiece(2,8, Piece.FORTEST);
-        field.changeFieldPiece(2,7, Piece.FORTEST);
-        // .  .  F  .  .
-        // .  .  F  .  .
-        // F  F  .  F  .
+        updateNum = 0;
+        field.changeFieldPiece(0,9, Piece.CROSS);
+        field.changeFieldPiece(1,9, Piece.CROSS);
+        field.changeFieldPiece(3,9, Piece.CROSS);
+        field.changeFieldPiece(2,8, Piece.CROSS);
+        field.changeFieldPiece(2,7, Piece.CROSS);
+        // .  .  .  .  .
+        // .  .  X  .  .
+        // .  .  X  .  .
+        // X  X  .  X  .
         field.update(9*10+3);
         field.update(9*10+2);
-        assertNotEquals(field.getPiece(0,9), Piece.FORTEST);
-        assertNotEquals(field.getPiece(1,9), Piece.FORTEST);
-        assertNotEquals(field.getPiece(2,9), Piece.FORTEST);
-        assertNotEquals(field.getPiece(3,9), Piece.FORTEST);
-        assertNotEquals(field.getPiece(2,8), Piece.FORTEST);
-        assertNotEquals(field.getPiece(2,7), Piece.FORTEST);
+        System.out.println(fieldString);
+        assertEquals(" ", fieldString.substring(getIndex(0,9), getIndex(0,9)+1));
+        assertEquals(" ", fieldString.substring(getIndex(1,9), getIndex(1,9)+1));
+        assertEquals(" ", fieldString.substring(getIndex(2,9), getIndex(2,9)+1));
+        assertEquals(" ", fieldString.substring(getIndex(2,8), getIndex(2,8)+1));
+        assertEquals(" ", fieldString.substring(getIndex(2,7), getIndex(2,7)+1));
     }
 
 
     @Test
     void straightFive() {
-        Field field = new Field(10);
+        field.setListener(testListener);
         field.fillField();
-        field.changeFieldPiece(0,9, Piece.FORTEST);
-        field.changeFieldPiece(1,9, Piece.FORTEST);
-        field.changeFieldPiece(3,9, Piece.FORTEST);
-        field.changeFieldPiece(4,9, Piece.FORTEST);
-        field.changeFieldPiece(2,8, Piece.FORTEST);
-        // T  X  T  X  T . .
-        // X  T  F  T  X . .
-        // F  F  X  F  F . .
+        updateNum = 0;
+        field.changeFieldPiece(0,9, Piece.CROSS);
+        field.changeFieldPiece(1,9, Piece.CROSS);
+        field.changeFieldPiece(3,9, Piece.CROSS);
+        field.changeFieldPiece(4,9, Piece.CROSS);
+        field.changeFieldPiece(2,8, Piece.CROSS);
+        // .  .  .  .  .  .
+        // .  .  X  .  .  .
+        // X  X  .  X  X  .
         field.update(9*10+2);
         field.update(8*10+2);
-        assertNotEquals(field.getPiece(0,9), Piece.FORTEST);
-        assertNotEquals(field.getPiece(1,9), Piece.FORTEST);
-        assertNotEquals(field.getPiece(2,9), Piece.FORTEST);
-        assertNotEquals(field.getPiece(3,9), Piece.FORTEST);
-        assertNotEquals(field.getPiece(4,9), Piece.FORTEST);
+        assertEquals( " ", fieldString.substring(getIndex(0,9), getIndex(0,9)+1));
+        assertEquals( " ", fieldString.substring(getIndex(1,9), getIndex(1,9)+1));
+        assertEquals( " ", fieldString.substring(getIndex(2,9), getIndex(2,9)+1));
+        assertEquals( " ", fieldString.substring(getIndex(3,9), getIndex(3,9)+1));
+        assertEquals( " ", fieldString.substring(getIndex(4,9), getIndex(4,9)+1));
     }
 
     @Test
     void ifRemoved() {
-        Field field = new Field(10);
+        field.setListener(testListener);
         field.fillField();
-        for (int i = 7; i < 10; i++) {
-            for (int j = 0; j < 4; j++) {
-                field.changeFieldPiece(j,i, Piece.FORTEST);
-            }
-        }
-        // F  F  F  . .
-        // F  F  F  . .
-        // F  F  F  . .
-        field.update(8*10+1);
-        field.update(8*10+1);
-        for (int i = 7; i < 10; i++) {
-            for (int j = 0; j < 4; j++) {
-                assertEquals(field.getPiece(j,i), Piece.FORTEST);
-            }
-        }
+        updateNum = 0;
+        field.changeFieldPiece(0, 9, Piece.CROSS);
+        field.changeFieldPiece(1, 9, Piece.CROSS);
+        field.changeFieldPiece(2, 9, Piece.CROSS);
+        System.out.println(fieldString);
+        // .  .  .  .  .
+        // X  X  X  .  .
+        field.update(9*10+1);
+        field.update(9*10+1);
+        fieldString = field.toString(); //this test doesn't get to listener.update
+        assertEquals("X", fieldString.substring(getIndex(0,9), getIndex(0,9)+1));
+        assertEquals("X", fieldString.substring(getIndex(1,9), getIndex(1,9)+1));
+        assertEquals("X", fieldString.substring(getIndex(2,9), getIndex(2,9)+1));
     }
 
 }

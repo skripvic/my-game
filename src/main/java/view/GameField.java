@@ -18,7 +18,7 @@ public class GameField extends JPanel {
 
     public GameField(int fieldSize) {
         this.fieldSize = fieldSize;
-        this.field = new String(new char[fieldSize * fieldSize]).replace('\0', '-');
+        this.field = "-".repeat(fieldSize * fieldSize);
 
         this.addMouseListener(new MouseAdapter() {
             @Override
@@ -48,7 +48,6 @@ public class GameField extends JPanel {
     private int squareWidth() { return (int) getSize().getWidth() / fieldSize; }
 
     private int squareHeight() { return (int) getSize().getHeight() / fieldSize; }
-
 
     @Override
     public void paint(Graphics g) {

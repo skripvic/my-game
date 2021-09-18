@@ -23,30 +23,35 @@ public class Field {
                 generatePiece(i, j);
             }
         }
-        if (listener != null) listener.update();
+        listener.update();
     }
 
     private void generatePiece(int i, int j) {
         int randomNum = rand.nextInt(5);
         Piece newPiece;
-        while (true) {
-            switch (randomNum) {
-                case (0) -> newPiece = Piece.DIAMOND;
-                case (1) -> newPiece = Piece.TRIANGLE;
-                case (2) -> newPiece = Piece.SQUARE;
-                case (3) -> newPiece = Piece.CIRCLE;
-                case (4) -> newPiece = Piece.CROSS;
-                default -> newPiece = Piece.EMPTY;
-            }
-            if ((i >= 2) && (j >= 2) && (field[i - 2][j] == newPiece && field[i - 1][j] == newPiece
-                    || field[i][j - 2] == newPiece && field[i][j - 1] == newPiece)
-                    || i < 2 && j >= 2 && field[i][j - 2] == newPiece && field[i][j - 1] == newPiece
-                    || i >= 2 && j < 2 && field[i - 2][j] == newPiece && field[i - 1][j] == newPiece) {
-                randomNum = (randomNum + 1) % 5;
-            } else {
-                field[i][j] = newPiece;
-                break;
-            }
+        newPiece= getPieceByNumber(randomNum);
+        if (isThreeEqualPieces(i, j, newPiece)) {
+            randomNum = (randomNum + 1) % 5;
+            newPiece = getPieceByNumber(randomNum);
+        }
+        field[i][j] = newPiece;
+    }
+
+    private boolean isThreeEqualPieces(int i, int j, Piece newPiece) {
+        return (i >= 2) && (j >= 2) && (field[i - 2][j] == newPiece && field[i - 1][j] == newPiece
+                || field[i][j - 2] == newPiece && field[i][j - 1] == newPiece)
+                || i < 2 && j >= 2 && field[i][j - 2] == newPiece && field[i][j - 1] == newPiece
+                || i >= 2 && j < 2 && field[i - 2][j] == newPiece && field[i - 1][j] == newPiece;
+    }
+
+    private Piece getPieceByNumber(int randomNum) {
+        switch (randomNum) {
+            case (0) -> { return Piece.DIAMOND; }
+            case (1) -> { return Piece.TRIANGLE; }
+            case (2) -> { return Piece.SQUARE; }
+            case (3) -> { return Piece.CIRCLE; }
+            case (4) -> { return Piece.CROSS; }
+            default -> { return Piece.EMPTY; }
         }
     }
 
@@ -73,15 +78,15 @@ public class Field {
 
     private void tryMovePieces(int x1, int y1, int x2, int y2){
         switchPieces(x1, y1, x2, y2);
-        if (listener != null) listener.update();
+        listener.update();
         if (!removeCombinations()){
             switchPieces(x1, y1, x2, y2);
-            if (listener != null) listener.update();
+            listener.update();
         }
     }
 
     private void dropGeneratePieces(){
-        if (listener != null) listener.update();
+        listener.update();
         int countEmpty, lowestEmpty = 0;
         for (int i = 0; i < size; i++) {
             countEmpty = 0;
@@ -96,11 +101,11 @@ public class Field {
                     field[i][j] = Piece.EMPTY;
                 }
             }
-            if (listener != null) listener.update();
+            //listener.update();
             for (; lowestEmpty >= 0; lowestEmpty--){
                 generatePiece(i, lowestEmpty);
             }
-            if (listener != null) listener.update();
+            listener.update();
         }
         removeCombinations();
     }
@@ -165,7 +170,7 @@ public class Field {
                         else if (curCombSize == 6) pointSum += 10;
                         else if (curCombSize == 7) pointSum += 15;
                         else pointSum += curCombSize;
-                        if (listener != null) listener.updateScore(pointSum);
+                        listener.updateScore(pointSum);
                     }
                     curPiece = field[i][j];
                     curCombSize = 1;
@@ -186,14 +191,14 @@ public class Field {
                             field[i][j-curCombSize+k+addForLastPiece] = Piece.EMPTY;
                             pointSum += curCombSize;
                         }
-                        if (listener != null) listener.updateScore(pointSum);
+                        listener.updateScore(pointSum);
                     }
                     curPiece = field[i][j];
                     curCombSize = 1;
                 }
             }
         }
-        if (listener != null) listener.update();
+        listener.update();
         if (isRemoved) dropGeneratePieces();
         return isRemoved;
     }
