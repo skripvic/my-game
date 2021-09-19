@@ -5,8 +5,6 @@ import presenter.GamePresenter;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
-//why my timer doesn't extend java.swing.Timer:
-//i can't stop/restart timer and change gameTime from actionListener in super()
 
 public class Timer {
     private final GamePresenter presenter;

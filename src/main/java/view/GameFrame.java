@@ -140,25 +140,12 @@ public class GameFrame extends JFrame implements GameView, GameField.ClickListen
     private void recordsPanel(boolean isEnd){
         JFrame frame = new JFrame(RECORDS_FRAME);
         frame.setLayout(new GridBagLayout());
-
         String names = records.getAllNames();
         String scores = records.getAllScores();
-        if (!scores.equals("")) {
-            scores = scores.replaceAll(",", "\n\n")
-                    .replace("[", "")
-                    .replace("]", "")
-                    .replaceAll(" ", "");
-
-            names = names.replaceAll(",", "\n\n")
-                    .replace("[", "")
-                    .replace("]", "")
-                    .replaceAll(" ", "");
-        }
-        else{
+        if (scores.equals("")) {
             names = NO_RECORDS_MESSAGE;
             scores = NO_RECORDS_MESSAGE;
         }
-
         JTextArea textNames = new JTextArea(names);
         JTextArea textScores = new JTextArea(scores);
 
@@ -218,7 +205,7 @@ public class GameFrame extends JFrame implements GameView, GameField.ClickListen
     }
 
 
-    private void newRecordPanel(){
+    private void newRecordPanel(int score){
         JFrame frame = new JFrame(NEW_RECORD_FRAME);
         frame.setLayout(new GridBagLayout());
 
@@ -244,7 +231,7 @@ public class GameFrame extends JFrame implements GameView, GameField.ClickListen
         newRecordField.addActionListener(e -> {
             frame.dispose();
             String name = newRecordField.getText();
-            records.saveNewRecord(name);
+            records.saveNewRecord(name, score);
             recordsPanel(true);
         });
     }
@@ -252,8 +239,6 @@ public class GameFrame extends JFrame implements GameView, GameField.ClickListen
 
     @Override
     public void start(String field) {
-        // CR: seems redundnant, please check
-        gameField.updateField(field);
         if (timer != null) timer.stop();
         timer = new Timer(presenter, this);
     }
@@ -272,7 +257,7 @@ public class GameFrame extends JFrame implements GameView, GameField.ClickListen
     public void end(int score) {
         if (!records.isNewRecord(score))
             endGameFrame();
-        else newRecordPanel();
+        else newRecordPanel(score);
     }
 
     private void endGameFrame(){

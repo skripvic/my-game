@@ -37,21 +37,23 @@ public class Field {
     }
 
     private boolean isThreeEqualPieces(int i, int j, Piece newPiece) {
-        return (i >= 2) && (j >= 2) && (field[i - 2][j] == newPiece && field[i - 1][j] == newPiece
+        return i >= 2 && j >= 2 && (field[i - 2][j] == newPiece && field[i - 1][j] == newPiece
                 || field[i][j - 2] == newPiece && field[i][j - 1] == newPiece)
                 || i < 2 && j >= 2 && field[i][j - 2] == newPiece && field[i][j - 1] == newPiece
                 || i >= 2 && j < 2 && field[i - 2][j] == newPiece && field[i - 1][j] == newPiece;
     }
 
     private Piece getPieceByNumber(int randomNum) {
+        // i hope this is what you meant, im not sure
+        if (randomNum < 0 || randomNum > 4) throw new IllegalStateException();
         switch (randomNum) {
             case (0) -> { return Piece.DIAMOND; }
-            case (1) -> { return Piece.TRIANGLE; }
-            case (2) -> { return Piece.SQUARE; }
-            case (3) -> { return Piece.CIRCLE; }
-            case (4) -> { return Piece.CROSS; }
-            // CR: I'd prefer explicit check and invalid state exception at the start of method
-            default -> { return Piece.EMPTY; }
+            case (1) -> { return Piece.TRIANGLE;}
+            case (2) -> { return Piece.SQUARE;  }
+            case (3) -> { return Piece.CIRCLE;  }
+            case (4) -> { return Piece.CROSS;   }
+            //still left this line, it gives me error w/o it
+            default ->  { return Piece.EMPTY;   }
         }
     }
 

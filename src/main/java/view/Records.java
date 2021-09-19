@@ -2,56 +2,46 @@ package view;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Scanner;
 
 
 public class Records {
-
-    //why i didn't put records into resources:
-    //resources contain files that we use but not change
-    //nd i can't really make output stream from resources
-
     private static final String FILE_NAME = "RecordsInformation/Records.txt";
-    /*
-    CR:
-    it's usually better not to have multiple presentations for one thing, since you have to update all them on change
-    so i'd probably have only List<Record> where Record is:
-    class Record { String name; int score; String toString() { return name + "," + score; }
-     */
-    private List<String> allRecords;
-    private final List<String> nameList;
-    private final List<Integer> scoreList;
-    private int newScore;
+    private final List<Record> allRecords;
 
 
     public Records(){
-        scoreList = new ArrayList<>();
-        nameList = new ArrayList<>();
-        readFile();
-    }
-
-
-    private void readFile(){
+        allRecords = new ArrayList<>();
+        List<String> recordList = new ArrayList<>();
         try {
-            allRecords = Files.readAllLines(Paths.get(FILE_NAME));
-        } catch (IOException e) {
-            // CR: we can try to recreate records file in this case
-            // CR: or at least assign allRecords = new ArrayList<>() , it's up to you
+            recordList = Files.readAllLines(Paths.get(FILE_NAME));
+        } catch (NoSuchFileException e) {
+            System.out.println("File was not found");
+            try {
+                Files.write(Paths.get(FILE_NAME), Collections.singleton(""));
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            e.printStackTrace();
+        } catch (IOException e){
             e.printStackTrace();
         }
-        separateNamesAndScores();
-    }
-
-    private void separateNamesAndScores() {
         int score;
-        for (String record : allRecords) {
-            // CR: please use Scanner instead
-            score = Integer.parseInt(record.substring(record.lastIndexOf(",") + 1));
-            nameList.add(record.substring(0, record.lastIndexOf(",")));
-            scoreList.add(score);
+        String name;
+        if (!recordList.isEmpty()) {
+            for (String record : recordList) {
+                Scanner scanner = new Scanner(record);
+                scanner.useDelimiter(",");
+                name = scanner.next();
+                score = Integer.parseInt(scanner.next());
+                allRecords.add(new Record(name, score));
+                scanner.close();
+            }
         }
     }
 
@@ -59,41 +49,43 @@ public class Records {
     public String getAllScores(){
         if (allRecords.isEmpty())
             return "";
-        else
-            return scoreList.toString();
+        else {
+            StringBuilder result = new StringBuilder();
+            for (Record record: allRecords) {
+                result.append(record.getScore()).append("\n\n");
+            }
+            return result.toString();
+        }
     }
-
 
     public String getAllNames() {
         if (allRecords.isEmpty())
             return "";
-        else
-            return nameList.toString();
+        else {
+            StringBuilder result = new StringBuilder();
+            for (Record record: allRecords) {
+                result.append(record.getName()).append("\n\n");
+            }
+            return result.toString();
+        }
     }
 
-
-    public void saveNewRecord(String newName) {
-        for (int i = 0; i < scoreList.size(); i++) {
-            if(scoreList.get(i) < newScore){
-                scoreList.add(i, newScore);
-                nameList.add(i, newName);
-                allRecords.add(i, newName+","+newScore);
+    public void saveNewRecord(String newName, int newScore) {
+        for (int i = 0; i < allRecords.size(); i++) {
+            if(allRecords.get(i).getScore() < newScore){
+                allRecords.add(i, new Record(newName, newScore));
                 break;
             }
         }
-        if (scoreList.isEmpty() || scoreList.get(scoreList.size()-1) >= newScore){
-            nameList.add(newName);
-            scoreList.add(newScore);
-            allRecords.add(newName + "," + newScore);
+        if (allRecords.isEmpty() || allRecords.get(allRecords.size()-1).getScore() >= newScore){
+            allRecords.add(new Record(newName, newScore));
         }
-        if (scoreList.size() > 10){
-            int lastIndex = scoreList.size()-1;
-            scoreList.remove(lastIndex);
-            nameList.remove(lastIndex);
+        if (allRecords.size() > 10){
+            int lastIndex = allRecords.size()-1;
             allRecords.remove(lastIndex);
         }
         try {
-            Files.write(Paths.get(FILE_NAME), allRecords);
+            Files.write(Paths.get(FILE_NAME), recordsToStringArray());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -107,18 +99,46 @@ public class Records {
         }
     }
 
-    // CR: i think it's better not to have newScore as part of a `Records` class state, you can pass it again in saveNewRecord
     public boolean isNewRecord(int newScore) {
-        if (scoreList.size() < 10){
-            this.newScore = newScore;
+        if (allRecords.size() < 10){
             return true;
         }
-        for (Integer score : scoreList) {
-            if (score < newScore) {
-                this.newScore = newScore;
+        for (Record record : allRecords) {
+            if (record.getScore() < newScore) {
                 return true;
             }
         }
         return false;
     }
+
+    private static class Record {
+        String name;
+        int score;
+
+        public Record(String name, int score){
+            this.name = name;
+            this.score = score;
+        }
+
+        public String toString() {
+            return name + "," + score;
+        }
+
+        public int getScore() {
+            return score;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
+
+    public List<String> recordsToStringArray(){
+        List<String> result = new ArrayList<>();
+        for (Record record : allRecords) {
+            result.add(record.toString());
+        }
+        return result;
+    }
+
 }
