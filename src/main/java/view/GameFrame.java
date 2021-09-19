@@ -252,6 +252,7 @@ public class GameFrame extends JFrame implements GameView, GameField.ClickListen
 
     @Override
     public void start(String field) {
+        // CR: seems redundnant, please check
         gameField.updateField(field);
         if (timer != null) timer.stop();
         timer = new Timer(presenter, this);

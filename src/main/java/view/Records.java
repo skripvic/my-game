@@ -15,6 +15,12 @@ public class Records {
     //nd i can't really make output stream from resources
 
     private static final String FILE_NAME = "RecordsInformation/Records.txt";
+    /*
+    CR:
+    it's usually better not to have multiple presentations for one thing, since you have to update all them on change
+    so i'd probably have only List<Record> where Record is:
+    class Record { String name; int score; String toString() { return name + "," + score; }
+     */
     private List<String> allRecords;
     private final List<String> nameList;
     private final List<Integer> scoreList;
@@ -32,6 +38,8 @@ public class Records {
         try {
             allRecords = Files.readAllLines(Paths.get(FILE_NAME));
         } catch (IOException e) {
+            // CR: we can try to recreate records file in this case
+            // CR: or at least assign allRecords = new ArrayList<>() , it's up to you
             e.printStackTrace();
         }
         separateNamesAndScores();
@@ -40,6 +48,7 @@ public class Records {
     private void separateNamesAndScores() {
         int score;
         for (String record : allRecords) {
+            // CR: please use Scanner instead
             score = Integer.parseInt(record.substring(record.lastIndexOf(",") + 1));
             nameList.add(record.substring(0, record.lastIndexOf(",")));
             scoreList.add(score);
@@ -98,6 +107,7 @@ public class Records {
         }
     }
 
+    // CR: i think it's better not to have newScore as part of a `Records` class state, you can pass it again in saveNewRecord
     public boolean isNewRecord(int newScore) {
         if (scoreList.size() < 10){
             this.newScore = newScore;

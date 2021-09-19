@@ -107,37 +107,35 @@ public class GameField extends JPanel {
         g.setColor(getBackground());
         g.fillRect(xFrom - 5, yFrom - 5, width + 10, height + 10);
         switch (piece) {
-            case 'X':
+            case 'X' -> {
                 g.setColor(Color.BLUE);
                 g.draw(new Line2D.Double(xFrom, yFrom, xTo, yTo));
                 g.drawLine(xFrom, yTo, xTo, yFrom);
-                break;
-            case 'O':
+            }
+            case 'O' -> {
                 g.setColor(Color.GREEN);
                 g.drawOval(xFrom, yFrom, width, height);
-                break;
-            case 'S':
+            }
+            case 'S' -> {
                 g.setColor(Color.ORANGE);
                 g.drawLine(xFrom, yFrom, xFrom, yTo);
                 g.drawLine(xFrom + 1, yFrom, xTo, yFrom);
                 g.drawLine(xTo, yFrom + 1, xTo, yTo);
                 g.drawLine(xTo - 1, yTo, xFrom + 1, yTo);
-                break;
-            case 'T':
+            }
+            case 'T' -> {
                 g.setColor(Color.MAGENTA);
-                g.drawLine(xFrom, yFrom, xFrom + width/2, yTo);
-                g.drawLine(xTo, yFrom, xFrom + width/2, yTo);
+                g.drawLine(xFrom, yFrom, xFrom + width / 2, yTo);
+                g.drawLine(xTo, yFrom, xFrom + width / 2, yTo);
                 g.drawLine(xFrom, yFrom, xTo, yFrom);
-                break;
-            case 'D':
+            }
+            case 'D' -> {
                 g.setColor(Color.CYAN);
-                g.drawLine(xFrom + width/2, yFrom, xFrom, yFrom + width/2);
-                g.drawLine(xFrom, yFrom + width/2, xFrom + width/2, yTo);
-                g.drawLine(xFrom + width/2, yTo, xTo, yFrom + width/2);
-                g.drawLine(xTo, yFrom + width/2, xFrom + width/2, yFrom);
-                break;
-            default:
-                break;
+                g.drawLine(xFrom + width / 2, yFrom, xFrom, yFrom + width / 2);
+                g.drawLine(xFrom, yFrom + width / 2, xFrom + width / 2, yTo);
+                g.drawLine(xFrom + width / 2, yTo, xTo, yFrom + width / 2);
+                g.drawLine(xTo, yFrom + width / 2, xFrom + width / 2, yFrom);
+            }
         }
     }
 

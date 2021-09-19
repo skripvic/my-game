@@ -28,8 +28,7 @@ public class Field {
 
     private void generatePiece(int i, int j) {
         int randomNum = rand.nextInt(5);
-        Piece newPiece;
-        newPiece= getPieceByNumber(randomNum);
+        Piece newPiece = getPieceByNumber(randomNum);
         if (isThreeEqualPieces(i, j, newPiece)) {
             randomNum = (randomNum + 1) % 5;
             newPiece = getPieceByNumber(randomNum);
@@ -51,6 +50,7 @@ public class Field {
             case (2) -> { return Piece.SQUARE; }
             case (3) -> { return Piece.CIRCLE; }
             case (4) -> { return Piece.CROSS; }
+            // CR: I'd prefer explicit check and invalid state exception at the start of method
             default -> { return Piece.EMPTY; }
         }
     }
@@ -220,10 +220,6 @@ public class Field {
 
     public void changeFieldPiece(int i, int j, Piece piece){
         field[i][j] = piece;
-    }
-
-    public Piece getPiece(int i, int j){
-        return field[i][j];
     }
 
     @Override
