@@ -244,8 +244,8 @@ public class GameFrame extends JFrame implements GameView, GameField.ClickListen
     }
 
     @Override
-    public void update(String field) {
-        gameField.updateField(field);
+    public void update(String field, boolean isWholeField) {
+        gameField.updateField(field, isWholeField);
     }
 
     @Override

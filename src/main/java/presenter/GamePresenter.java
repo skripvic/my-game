@@ -30,8 +30,8 @@ public class GamePresenter implements Runnable, FieldListener {
     }
 
     @Override
-    public void update() {
-        view.update(field.toString());
+    public void update(boolean isWholeField) {
+        view.update(field.toString(), isWholeField);
     }
 
     public void newGame() {

@@ -23,7 +23,7 @@ public class Field {
                 generatePiece(i, j);
             }
         }
-        listener.update();
+        listener.update(true);
     }
 
     private void generatePiece(int i, int j) {
@@ -80,15 +80,15 @@ public class Field {
 
     private void tryMovePieces(int x1, int y1, int x2, int y2){
         switchPieces(x1, y1, x2, y2);
-        listener.update();
+        listener.update(false);
         if (!removeCombinations()){
             switchPieces(x1, y1, x2, y2);
-            listener.update();
+            listener.update(false);
         }
     }
 
     private void dropGeneratePieces(){
-        listener.update();
+        listener.update(false);
         int countEmpty, lowestEmpty = 0;
         for (int i = 0; i < size; i++) {
             countEmpty = 0;
@@ -103,11 +103,11 @@ public class Field {
                     field[i][j] = Piece.EMPTY;
                 }
             }
-            //listener.update();
+            listener.update(false);
             for (; lowestEmpty >= 0; lowestEmpty--){
                 generatePiece(i, lowestEmpty);
             }
-            listener.update();
+            listener.update(false);
         }
         removeCombinations();
     }
@@ -156,6 +156,7 @@ public class Field {
                                 additionalSize += 2;
                                 field[newI][j-1] = Piece.EMPTY;
                                 field[newI][j-2] = Piece.EMPTY;
+
                             }
                             if (j != size-1 && field[newI][j+1] == curPiece && j != size-2 && field[newI][j+2] == curPiece){
                                 additionalSize += 2;
@@ -200,7 +201,7 @@ public class Field {
                 }
             }
         }
-        listener.update();
+        listener.update(false);
         if (isRemoved) dropGeneratePieces();
         return isRemoved;
     }

@@ -10,7 +10,7 @@ class FieldTest {
 
     FieldListener testListener = new FieldListener() {
         @Override
-        public void update() {
+        public void update(boolean isWholeField) {
             updateNum++;
             if (updateNum <= 2){
                 fieldString = field.toString();

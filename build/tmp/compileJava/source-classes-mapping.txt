@@ -1,7 +1,10 @@
-model/FieldListener.java
- model.FieldListener
+view/Records.java
+ view.Records
+ view.Records$Record
 model/Piece.java
  model.Piece
+model/FieldListener.java
+ model.FieldListener
 view/GameField.java
  view.GameField
  view.GameField$1
@@ -10,16 +13,13 @@ presenter/GamePresenter.java
  presenter.GamePresenter
 model/Field.java
  model.Field
-view/Records.java
- view.Records
- view.Records$Record
-view/GameView.java
- view.GameView
 Main.java
  Main
 view/GameFrame.java
  view.GameFrame
  view.GameFrame$1
+view/GameView.java
+ view.GameView
 view/Timer.java
  view.Timer
  view.Timer$1

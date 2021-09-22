@@ -6,7 +6,7 @@ public interface GameView {
 
     void start(String field);
 
-    void update(String field);
+    void update(String field, boolean isWholeField);
 
     void createStartPanel();
 
