@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 
 public class Records {
@@ -18,6 +19,15 @@ public class Records {
     public Records(){
         allRecords = new ArrayList<>();
         List<String> recordList = new ArrayList<>();
+        /*
+        CR:
+        1. try to read from file
+        2. if failed - try to create file (use Files.createFile())
+        3. if 2. has failed - print to System.err and continue with only in memory state. return
+        4. scan records from file. if scanning failed - recreate file as empty file (same as steps 2 and 3)
+        5. close file if step 3. wasn't executed
+        also invoke this logic on the first call of getAllScores instead of doing this in constructor
+         */
         try {
             recordList = Files.readAllLines(Paths.get(FILE_NAME));
         } catch (NoSuchFileException e) {
@@ -45,7 +55,7 @@ public class Records {
         }
     }
 
-
+    // CR: make Record public outer class and return List<Record> instead of getAllScores and getAllNames
     public String getAllScores(){
         if (allRecords.isEmpty())
             return "";
@@ -71,7 +81,29 @@ public class Records {
     }
 
     public void saveNewRecord(String newName, int newScore) {
+        /*
+        CR:
+        private int insertPos(int newScore) { ... }
+
+        private boolean add(String name, int newScore) {
+          if (allRecords.isEmpty()) {
+            allRecords.add(..);
+            return true;
+          }
+          int pos = insertPos(newScore);
+          // we have 10 records and they are all cooler then a new one
+          if (pos == -1) return false;
+          allRecords.set(pos, ...);
+          return true;
+        }
+
+
+        public void saveNewRecord(String newName, int newScore) {
+          if (add(newName, newScore) Files.write(....);
+        }
+         */
         for (int i = 0; i < allRecords.size(); i++) {
+
             if(allRecords.get(i).getScore() < newScore){
                 allRecords.add(i, new Record(newName, newScore));
                 break;
@@ -85,13 +117,14 @@ public class Records {
             allRecords.remove(lastIndex);
         }
         try {
-            Files.write(Paths.get(FILE_NAME), recordsToStringArray());
+            Files.write(Paths.get(FILE_NAME), allRecords.stream().map(Record::toString).collect(Collectors.toList()));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void deleteAllRecords() {
+        // CR: this method should also update allRecords , no?
         try {
             Files.write(Paths.get(FILE_NAME), Collections.singleton(""));
         } catch (IOException e) {
@@ -112,7 +145,9 @@ public class Records {
     }
 
     private static class Record {
+        // CR: private final
         String name;
+        // CR: private final
         int score;
 
         public Record(String name, int score){
@@ -132,13 +167,4 @@ public class Records {
             return name;
         }
     }
-
-    public List<String> recordsToStringArray(){
-        List<String> result = new ArrayList<>();
-        for (Record record : allRecords) {
-            result.add(record.toString());
-        }
-        return result;
-    }
-
 }
