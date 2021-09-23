@@ -44,7 +44,6 @@ public class Field {
     }
 
     private Piece getPieceByNumber(int randomNum) {
-        // i hope this is what you meant, im not sure
         if (randomNum < 0 || randomNum > 4) throw new IllegalStateException();
         switch (randomNum) {
             case (0) -> { return Piece.DIAMOND; }
@@ -52,7 +51,6 @@ public class Field {
             case (2) -> { return Piece.SQUARE;  }
             case (3) -> { return Piece.CIRCLE;  }
             case (4) -> { return Piece.CROSS;   }
-            //still left this line, it gives me error w/o it
             default ->  { return Piece.EMPTY;   }
         }
     }
