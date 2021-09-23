@@ -1,3 +1,0 @@
-model/FieldTest.java
- model.FieldTest
- model.FieldTest$1
