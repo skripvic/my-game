@@ -1,9 +1,10 @@
-plugins {
-    id 'java'
-}
+apply plugin: 'java'
 
 group 'com.github.skripvic'
 version '1.0-SNAPSHOT'
+
+targetCompatibility=15
+sourceCompatibility=15
 
 repositories {
     mavenCentral()
