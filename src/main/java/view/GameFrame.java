@@ -5,7 +5,7 @@ import presenter.GamePresenter;
 import javax.swing.*;
 import java.awt.*;
 
-public class GameFrame extends JFrame implements GameView, GameField.ClickListener{
+public class GameFrame extends JFrame implements GameView, GameField.ClickListener {
 
     private static final String NAME = "MATCH THREE GAME";
     private static final String MENU = "Menu";
@@ -34,10 +34,10 @@ public class GameFrame extends JFrame implements GameView, GameField.ClickListen
 
     private final Records records;
     private final GameField gameField;
-    private GamePresenter presenter;
     Timer timer;
     JTextArea scoreText;
     JTextArea timerText;
+    private GamePresenter presenter;
 
     public GameFrame(int fieldSize) {
         super(NAME);
@@ -70,12 +70,12 @@ public class GameFrame extends JFrame implements GameView, GameField.ClickListen
         this.setVisible(true);
     }
 
-    private void fillGridForGameFrame(Button refillButton){
+    private void fillGridForGameFrame(Button refillButton) {
         GridBagConstraints constraints = new GridBagConstraints();
 
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.weightx = 1.0;
-        constraints.insets = new Insets(0,  25, 0, 0);
+        constraints.insets = new Insets(0, 25, 0, 0);
         constraints.gridx = 0;
         constraints.gridy = 0;
         this.add(refillButton, constraints);
@@ -86,7 +86,7 @@ public class GameFrame extends JFrame implements GameView, GameField.ClickListen
         constraints.gridx = 2;
         this.add(timerText, constraints);
 
-        constraints.insets = new Insets(1,  3, 0, 0);
+        constraints.insets = new Insets(1, 3, 0, 0);
         constraints.gridx = 0;
         constraints.gridy = 1;
         constraints.gridwidth = 3;
@@ -125,7 +125,7 @@ public class GameFrame extends JFrame implements GameView, GameField.ClickListen
     }
 
 
-    private void aboutPanel(){
+    private void aboutPanel() {
         JFrame frame = new JFrame(ABOUT);
         JTextArea aboutText = new JTextArea(ABOUT_TEXT);
         aboutText.setEditable(false);
@@ -137,7 +137,7 @@ public class GameFrame extends JFrame implements GameView, GameField.ClickListen
     }
 
 
-    private void recordsPanel(boolean isEnd){
+    private void recordsPanel(boolean isEnd) {
         JFrame frame = new JFrame(RECORDS_FRAME);
         frame.setLayout(new GridBagLayout());
         String names = records.getAllNames();
@@ -195,17 +195,17 @@ public class GameFrame extends JFrame implements GameView, GameField.ClickListen
     }
 
 
-    public void changeTime(int time){
+    public void changeTime(int time) {
         timerText.setText(String.format(TIME_LIMIT, time));
     }
 
     @Override
-    public void updateScore(int score){
+    public void updateScore(int score) {
         scoreText.setText(String.format(POINT_COUNT, score));
     }
 
 
-    private void newRecordPanel(int score){
+    private void newRecordPanel(int score) {
         JFrame frame = new JFrame(NEW_RECORD_FRAME);
         frame.setLayout(new GridBagLayout());
 
@@ -216,7 +216,7 @@ public class GameFrame extends JFrame implements GameView, GameField.ClickListen
 
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridwidth = GridBagConstraints.REMAINDER;
-        constraints.insets = new Insets(0,  0, 5, 0);
+        constraints.insets = new Insets(0, 0, 5, 0);
         constraints.fill = GridBagConstraints.BOTH;
         frame.add(newRecordText, constraints);
 
@@ -245,7 +245,8 @@ public class GameFrame extends JFrame implements GameView, GameField.ClickListen
 
     @Override
     public void update(String field, boolean isWholeField) {
-        gameField.updateField(field, isWholeField);
+        gameField.setField(field);
+        gameField.repaint();
     }
 
     @Override
@@ -260,7 +261,7 @@ public class GameFrame extends JFrame implements GameView, GameField.ClickListen
         else newRecordPanel(score);
     }
 
-    private void endGameFrame(){
+    private void endGameFrame() {
         int choice = JOptionPane.showOptionDialog(this, END_GAME_MESSAGE, END_GAME,
                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, END_GAME_OPTIONS, END_GAME_OPTIONS[1]);
         if (choice == JOptionPane.YES_OPTION) {

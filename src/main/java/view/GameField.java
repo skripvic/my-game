@@ -5,8 +5,6 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
-import java.util.ArrayList;
-import java.util.List;
 
 public class GameField extends JPanel {
     private static final double PIECE_FRACTION = 0.75;
@@ -27,15 +25,15 @@ public class GameField extends JPanel {
             public void mouseClicked(MouseEvent event) {
                 if (listener != null) {
                     if (!isPieceOdd) {
-                        pieceHighlightedX = (int) event.getPoint().getX()/squareWidth();
-                        pieceHighlightedY = (int) event.getPoint().getY()/squareHeight();
+                        pieceHighlightedX = (int) event.getPoint().getX() / squareWidth();
+                        pieceHighlightedY = (int) event.getPoint().getY() / squareHeight();
                         pieceHighlight(pieceHighlightedX, pieceHighlightedY);
                         isPieceOdd = true;
                     } else {
                         isPieceOdd = false;
-                        pieceHighlight((int) event.getPoint().getX()/squareWidth(), (int) event.getPoint().getY()/squareHeight());
+                        pieceHighlight((int) event.getPoint().getX() / squareWidth(), (int) event.getPoint().getY() / squareHeight());
                         pieceUnhighlight(pieceHighlightedX, pieceHighlightedY);
-                        pieceUnhighlight((int) event.getPoint().getX()/squareWidth(), (int) event.getPoint().getY()/squareHeight());
+                        pieceUnhighlight((int) event.getPoint().getX() / squareWidth(), (int) event.getPoint().getY() / squareHeight());
                     }
                     listener.onSquareClick(squareNum((int) event.getPoint().getX(), (int) event.getPoint().getY()));
                 }
@@ -47,46 +45,32 @@ public class GameField extends JPanel {
         return y / squareHeight() * fieldSize + x / squareWidth();
     }
 
-    private int squareWidth() { return (int) getSize().getWidth() / fieldSize; }
+    private int squareWidth() {
+        return (int) getSize().getWidth() / fieldSize;
+    }
 
-    private int squareHeight() { return (int) getSize().getHeight() / fieldSize; }
+    private int squareHeight() {
+        return (int) getSize().getHeight() / fieldSize;
+    }
 
     @Override
-    public void paint(Graphics g) {
-        super.paint(g);
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
         for (int i = 0; i < fieldSize; i++) {
             for (int j = 0; j < fieldSize; j++) {
                 drawSquare(g, i, j);
             }
         }
-        updateField(this.field, true);
+        updateField((Graphics2D) g);
     }
 
-    public void updateField(String field, boolean isWholeField) {
-        if (!isWholeField){
-            List<Integer> differentPieces = new ArrayList<>();
-            char[] charField = this.field.toCharArray();
-            char[] charField1 = field.toCharArray();
-            for (int i = 0; i < fieldSize*fieldSize; i++) {
-                if (charField[i] != charField1[i]) differentPieces.add(i);
-            }
-            this.field = field;
-            int xCenter, yCenter;
-            for (Integer piece : differentPieces) {
-                xCenter = squareXCenter(piece / fieldSize);
-                yCenter = squareYCenter(piece % fieldSize);
-                drawPiece(field.charAt(piece), xCenter, yCenter);
-            }
-        }
-        else {
-            this.field = field;
-            int xCenter, yCenter;
-            for (int i = 0; i < fieldSize; i++) {
-                for (int j = 0; j < fieldSize; j++) {
-                    xCenter = squareXCenter(j);
-                    yCenter = squareYCenter(i);
-                    drawPiece(field.charAt(i + j * fieldSize), xCenter, yCenter);
-                }
+    public void updateField(Graphics2D g) {
+        int xCenter, yCenter;
+        for (int i = 0; i < fieldSize; i++) {
+            for (int j = 0; j < fieldSize; j++) {
+                xCenter = squareXCenter(j);
+                yCenter = squareYCenter(i);
+                drawPiece(g, field.charAt(i + j * fieldSize), xCenter, yCenter);
             }
         }
     }
@@ -108,8 +92,7 @@ public class GameField extends JPanel {
         g.drawLine(x + squareWidth() - 1, y + squareHeight() - 1, x + squareWidth() - 1, y + 1);
     }
 
-    private void drawPiece(char piece, int xCenter, int yCenter) {
-        Graphics2D g = (Graphics2D) getGraphics();
+    private void drawPiece(Graphics2D g, char piece, int xCenter, int yCenter) {
         g.setStroke(new BasicStroke(LINE_WIDTH));
         int xFrom = xCenter - (int) (PIECE_FRACTION * (squareWidth() / 2));
         int xTo = xCenter + (int) (PIECE_FRACTION * (squareWidth() / 2));
@@ -150,6 +133,10 @@ public class GameField extends JPanel {
                 g.drawLine(xTo, yFrom + width / 2, xFrom + width / 2, yFrom);
             }
         }
+    }
+
+    public void setField(String field) {
+        this.field = field;
     }
 
     public void setClickListener(ClickListener listener) {
