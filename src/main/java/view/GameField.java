@@ -22,7 +22,7 @@ public class GameField extends JPanel {
 
         this.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent event) {
+            public void mousePressed(MouseEvent event) {
                 if (listener != null) {
                     if (!isPieceOdd) {
                         pieceHighlightedX = (int) event.getPoint().getX() / squareWidth();
