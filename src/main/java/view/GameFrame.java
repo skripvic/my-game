@@ -2,7 +2,7 @@ package view;
 
 import presenter.GamePresenter;
 import view.records.Record;
-import view.records.RecordAnalyzer;
+import view.records.RecordFile;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,7 +35,7 @@ public class GameFrame extends JFrame implements GameView, GameField.ClickListen
     private static final String[] END_GAME_OPTIONS = {"New game", "Exit"};
     private static final String END_GAME = "End game";
 
-    private final RecordAnalyzer recordAnalyzer;
+    private final RecordFile recordFile;
     private final GameField gameField;
     Timer timer;
     JTextArea scoreText;
@@ -50,7 +50,7 @@ public class GameFrame extends JFrame implements GameView, GameField.ClickListen
         this.setPreferredSize(new Dimension(600, 650));
         this.setResizable(false);
 
-        recordAnalyzer = new RecordAnalyzer();
+        recordFile = new RecordFile();
 
         Button refillButton = new Button("Refill field");
         refillButton.addActionListener(e -> presenter.refill());
@@ -112,7 +112,7 @@ public class GameFrame extends JFrame implements GameView, GameField.ClickListen
         aboutItem.addActionListener(event -> aboutPanel());
         highScoresItem.addActionListener(event -> recordsPanel(false));
         recordsDelete.addActionListener(event -> {
-            recordAnalyzer.deleteAllRecords();
+            recordFile.deleteAllRecords();
             recordsPanel(false);
         });
         exitItem.addActionListener(event -> System.exit(0));
@@ -143,7 +143,7 @@ public class GameFrame extends JFrame implements GameView, GameField.ClickListen
     private void recordsPanel(boolean isEnd) {
         JFrame frame = new JFrame(RECORDS_FRAME);
         frame.setLayout(new GridBagLayout());
-        List<Record> allRecords = recordAnalyzer.getAllRecords();
+        List<Record> allRecords = recordFile.getAllRecords();
         StringBuilder result = new StringBuilder();
         for (Record record: allRecords) {
             result.append(record.getName()).append("\n\n");
@@ -243,7 +243,7 @@ public class GameFrame extends JFrame implements GameView, GameField.ClickListen
         newRecordField.addActionListener(e -> {
             frame.dispose();
             String name = newRecordField.getText();
-            recordAnalyzer.saveNewRecord(name, score);
+            recordFile.saveNewRecord(name, score);
             recordsPanel(true);
         });
     }
@@ -268,7 +268,7 @@ public class GameFrame extends JFrame implements GameView, GameField.ClickListen
 
     @Override
     public void end(int score) {
-        if (!recordAnalyzer.isNewRecord(score))
+        if (!recordFile.isNewRecord(score))
             endGameFrame();
         else newRecordPanel(score);
     }

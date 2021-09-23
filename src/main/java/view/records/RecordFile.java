@@ -11,37 +11,19 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 
 
-public class RecordAnalyzer {
+public class RecordFile {
     private static final String FILE_NAME = "RecordsInformation/Records.txt";
     private List<Record> allRecords;
-    //private boolean isFileFound = true;
-
+    private boolean isFileFound = true;
 
     private void readFile(){
         allRecords = new ArrayList<>();
         List<String> recordList = new ArrayList<>();
-        /*
-        CR:
-        1. try to read from file
-        2. if failed - try to create file (use Files.createFile())
-        3. if 2. has failed - print to System.err and continue with only in memory state. return
-        4. scan records from file. if scanning failed - recreate file as empty file (same as steps 2 and 3)
-        5. close file if step 3. wasn't executed
-        also invoke this logic on the first call of getAllScores instead of doing this in constructor
-         */
-
-        //I don't understand difference between 1. and 4.
-        //In 5. what "close file" mean? There is no method "close" for file
         try {
             recordList = Files.readAllLines(Paths.get(FILE_NAME));
         } catch (NoSuchFileException e) {
             System.err.println("File was not found");
-            try {
-                Files.createFile(Paths.get(FILE_NAME));
-
-            } catch (IOException e1) {
-                System.err.println("File creation failed");
-            }
+            createNewFile();
         } catch (IOException e){
             e.printStackTrace();
         }
@@ -51,11 +33,35 @@ public class RecordAnalyzer {
             for (String record : recordList) {
                 Scanner scanner = new Scanner(record);
                 scanner.useDelimiter(",");
-                name = scanner.next();
-                score = Integer.parseInt(scanner.next());
+                try {
+                    if (scanner.hasNext())
+                        name = scanner.next();
+                    else throw new IllegalArgumentException();
+
+                    if (scanner.hasNext())
+                        score = Integer.parseInt(scanner.next());
+                    else throw new IllegalArgumentException();
+
+                    if (scanner.hasNext()) throw new IllegalArgumentException();
+                }
+                catch (IllegalArgumentException e){
+                    System.err.println("Illegal format of record");
+                    createNewFile();
+                    readFile();
+                    return;
+                }
                 allRecords.add(new Record(name, score));
                 scanner.close();
             }
+        }
+    }
+
+    private void createNewFile() {
+        try {
+            Files.createFile(Paths.get(FILE_NAME));
+        } catch (IOException e) {
+            System.err.println("File creation failed");
+            isFileFound = false;
         }
     }
 
@@ -91,7 +97,7 @@ public class RecordAnalyzer {
     }
 
     public void saveNewRecord(String newName, int newScore) {
-        if (add(newName, newScore))
+        if (add(newName, newScore) && isFileFound)
             try {
                 Files.write(Paths.get(FILE_NAME), allRecords.stream().map(Record::toString).collect(Collectors.toList()));
             } catch (IOException e) {
@@ -101,11 +107,12 @@ public class RecordAnalyzer {
 
     public void deleteAllRecords() {
         allRecords = new ArrayList<>();
-        try {
-            Files.write(Paths.get(FILE_NAME), Collections.singleton(""));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        if (isFileFound)
+            try {
+                Files.write(Paths.get(FILE_NAME), Collections.singleton(""));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
     }
 
     public boolean isNewRecord(int newScore) {
